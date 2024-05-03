@@ -68,5 +68,6 @@ class TopsisAutomation:
         return json.dumps(res)
 
     def persist_result(self) -> None:
+        TopsisResult.objects.all().delete()
         for i in range(len(self.resultTuples)):
             TopsisResult.objects.create(rank=i+1, name=self.resultTuples[i][0], score=self.resultTuples[i][1])
