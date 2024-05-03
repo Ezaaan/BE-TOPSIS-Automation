@@ -16,7 +16,10 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from web import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('hello/', views.HelloView.as_view(), name='hello'),
+    path('topsis/', views.TopsisAutomationView.as_view(), name='topsis')
 ]
