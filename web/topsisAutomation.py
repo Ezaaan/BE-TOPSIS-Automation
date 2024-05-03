@@ -3,6 +3,8 @@ from topsis import topsis
 import numpy as np
 import csv
 import operator
+import json
+from web.models import TopsisResult
 
 
 class TopsisAutomation:
@@ -22,17 +24,17 @@ class TopsisAutomation:
         self.weight = weight
         self.benefit = benefit
 
-    def printData(self):
+    def printData(self) -> None:
         print(self.data)
 
-    def setData(self, path):
+    def setData(self, path) -> None:
         self.data = pd.read_csv(path)
 
-    def appendData(self, path):
+    def appendData(self, path) -> None:
         newData = pd.read_csv(path)
         self.data.append(newData)
     
-    def seperateValues(self):
+    def seperateValues(self) -> None:
         # print(self.data)
         for row in self.data:
             temp = row
@@ -46,7 +48,7 @@ class TopsisAutomation:
 
         # return self.values
 
-    def calculateTopsis(self):
+    def calculateTopsis(self) -> None:
         self.seperateValues()
         print(self.data)
         decision = topsis(self.values, self.weight, self.benefit)
@@ -57,13 +59,13 @@ class TopsisAutomation:
 
         self.resultTuples = sorted(self.resultTuples, key=operator.itemgetter(1), reverse=True)
 
-    def showRanks(self):
-        if self.resultTuples.count == 0:
-            print("There are no previous results")
-            return
-
-        
+    def dump(self) -> dict[str, list[dict[str, any]]]:
+        res = {}
+        res['social_media'] = []
         for i in range (len(self.resultTuples)):
-            print(f"{i + 1}. {self.resultTuples[i][0]} = {self.resultTuples[i][1]}")
+            res['social_media'].append({'rank': i+1, 'name': self.resultTuples[i][0], 'score': self.resultTuples[i][1]})
+        return json.dumps(res)
 
-        
+    def persist(self) -> None:
+        for i in range(len(self.resultTuples)):
+            TopsisResult.objects.create(rank=i+1, name=self.resultTuples[i][0], score=self.resultTuples[i][1])
