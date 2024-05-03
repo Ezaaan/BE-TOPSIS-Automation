@@ -16,10 +16,12 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from django.conf.urls.static import static
+from django.conf import settings
 from web import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('hello/', views.HelloView.as_view(), name='hello'),
-    path('topsis/', views.TopsisAutomationView.as_view(), name='topsis')
-]
+    path('topsis', views.TopsisAutomationView.as_view(), name='topsis')
+] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

@@ -4,7 +4,7 @@ import numpy as np
 import csv
 import operator
 import json
-from web.models import TopsisResult
+from web.models import TopsisResult, ScoreRaw
 
 
 class TopsisAutomation:
@@ -13,6 +13,7 @@ class TopsisAutomation:
     alternatives = []
     def __init__(self, data, weight, benefit):
         print("initiating!")
+        # total_sample_size = ScoreRaw.objects.aggregate(sum_sample_size=Sum('sample_size'))
         file = open(data)
         csvreader = csv.reader(file)
         rows = []
@@ -66,6 +67,6 @@ class TopsisAutomation:
             res['social_media'].append({'rank': i+1, 'name': self.resultTuples[i][0], 'score': self.resultTuples[i][1]})
         return json.dumps(res)
 
-    def persist(self) -> None:
+    def persist_result(self) -> None:
         for i in range(len(self.resultTuples)):
             TopsisResult.objects.create(rank=i+1, name=self.resultTuples[i][0], score=self.resultTuples[i][1])
